@@ -22,6 +22,7 @@ module.exports = (sequelize, Sequelize) => {
     Contact.associate = function (models) {
         Contact.belongsTo(models.User);
         Contact.belongsTo(models.WEvent);
+        Contact.belongsTo(models.Invitation);
     };
     return Contact;
 };

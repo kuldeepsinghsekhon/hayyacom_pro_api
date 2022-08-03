@@ -38,19 +38,6 @@ Object.keys(db).forEach((modelName) => {
     db[modelName].associate(db);
   }
 });
-
-// db.Users = require("./user.model.js")(sequelize, Sequelize);
-// db.Contacts = require("./contact.model.js")(sequelize, Sequelize);
-// db.Events = require("./event.model.js")(sequelize, Sequelize);
-// db.Invitations = require("./invitation.model")(sequelize, Sequelize);
-
-
-//db.Users.hasMany(db.Events, { as: "events", foreignKey: "eventId"});
-/*  db.Events.belongsTo(db.Users, {
-    foreignKey: "userId",
-    as: "user",
-}); */
-
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
