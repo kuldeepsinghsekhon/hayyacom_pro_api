@@ -1,13 +1,13 @@
 const db = require("../models");
 const Contact = db.Contact;
-const Invitation = db.Invitations;
+const Invitation = db.Invitation;
 const Events = db.Events;
 const UserEvent = db.User_Event;
 const Op = db.Sequelize.Op;
 const { QueryTypes } = require('sequelize');
 
 // Create and Save a new contact
-exports.createBulk = (req, res) => {
+exports.createBulk =async (req, res) => {
     // Validate request
     if (!req.body) {
         res.status(400).send({
@@ -16,17 +16,29 @@ exports.createBulk = (req, res) => {
         return;
     }
     let contactData = req.body
-
-    // contactData.forEach(contact =>{
-    //     contact.userId = req.user.id
-    // });
-    let allcontacts=Contact.findAll({where:{UserId: req.UserId, WEventId:contactData.EventId}})
+    let allcontacts=await Contact.findAll({where:{UserId: contactData.UserId, EventId:contactData.EventId},raw:true})
     let contacts = []
-    contactData?.contacts?.forEach(contact => {
-      let ncontact = allcontacts.find(x => x.phoneNumber === contact.phoneNumber);
-      if (ncontact) contacts.push(ncontact)
+    
+    if(allcontacts.length>0){
+    
+      contactData?.contacts.forEach(contact => {
+      let ncontact = allcontacts.find(x => x.phoneNumber === contact.phoneNumber); 
+      if (!ncontact){
+        contact.UserId=contactData.UserId;
+        contact.EventId=contactData.EventId;
+        contacts.push(contact)
+        console.log('ncontactncontactncontact',contact)
+      }
+      
     })
-
+  }else{
+    contactData?.contacts.forEach(contact => {
+      contact.UserId=contactData.UserId;
+      contact.EventId=contactData.EventId;
+    })
+    contacts=contactData?.contacts;
+  }
+ // console.log('allcontactsallcontactsallcontacts',contacts)
     Contact.bulkCreate(contacts)
     .then(data => {
       res.send({data});
@@ -49,9 +61,13 @@ exports.create = async (req, res) => {
         return;
     }
     let contactData = req.body
-	let contact= await Contact.findOne({where : {UserId: contactData.UserId, WEventId:contactData.EventId,phoneNumber:contactData.phoneNumber} })
-	if(contact!=null){
-	res.status(500).send({
+    let UserId=contactData.UserId
+    let EventId= contactData.EventId
+    let phoneNumber=contactData.phoneNumber
+    console.log({UserId:UserId, WEventId:EventId,phoneNumber:phoneNumber})
+	let contact= await Contact.findOne({where : {UserId:UserId, EventId:EventId,phoneNumber:phoneNumber} })
+  if(contact!=null){
+	res.status(409).send({
         message:
            "This contact already exists"
       })	
@@ -61,7 +77,7 @@ exports.create = async (req, res) => {
       res.send({data});
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(501).send({
         message:
           err.message || "Some error occurred while creating the contact."
       });
@@ -73,16 +89,17 @@ exports.create = async (req, res) => {
 // Retrieve all contacts from the database.
 exports.findAll = async (req, res) => {
     const userId = req.params.id
+    const EventId = req.params.EventId
   let contacts= await Contact.findAll({
-      where : {userId : userId},
-      include: {model:Invitation}
+      where : {userId : userId,EventId:EventId},
+     // include: {model:Invitation}
   }).catch(err => {
     res.status(500).send({
       message:
         err.message || "Some error occurred while creating the contact."
     });
   }); 
-  console.log(contacts[0].Invitations)
+  //console.log(contacts[0].Invitations)
   return res.send({data: contacts});
 }
 //   let uninvited= await contact.findAll({

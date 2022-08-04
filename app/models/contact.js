@@ -7,22 +7,14 @@ module.exports = (sequelize, Sequelize) => {
         phoneNumber: {
             allowNull: false,
             type: Sequelize.STRING
-        },
-        totalGuest: {
-            allowNull: false,
-            type: Sequelize.INTEGER
-        },
-        totalChildren: {
-            allowNull: false,
-            type: Sequelize.INTEGER
         }
     }, {
         timestamps: false,
     });
     Contact.associate = function (models) {
-        Contact.belongsTo(models.User);
-        Contact.belongsTo(models.WEvent);
-        Contact.belongsTo(models.Invitation);
+        Contact.belongsTo(models.User, {foreignKey: "UserId" });
+        Contact.belongsTo(models.WEvent, {foreignKey: "EventId" });
+        //Contact.hasOne(models.Invitation, {foreignKey: "InvitationId" });
     };
     return Contact;
 };

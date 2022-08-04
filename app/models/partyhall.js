@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false,
     });
     Partyhall.associate = function (models) {
-        Partyhall.belongsTo(models.WEvent);
+        Partyhall.belongsTo(models.WEvent, {foreignKey: "EventId" });
     };
     return Partyhall;
 };

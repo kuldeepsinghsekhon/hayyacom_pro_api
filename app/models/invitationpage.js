@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
 	  freezeTableName: true
   });
   Invitationpage.associate = function (models) {
-    Invitationpage.belongsTo(models.Design);
+    Invitationpage.belongsTo(models.Design, {foreignKey: "DesignId" });
 };
     return Invitationpage;
   };

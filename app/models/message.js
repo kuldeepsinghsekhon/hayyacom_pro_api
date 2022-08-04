@@ -30,7 +30,7 @@ module.exports = (sequelize, Sequelize) => {
         freezeTableName: true
     });
     Message.associate = function (models) {
-        Message.belongsTo(models.Design);
+        Message.belongsTo(models.Design, {foreignKey: "DesignId" });
     };
     return Message;
 };

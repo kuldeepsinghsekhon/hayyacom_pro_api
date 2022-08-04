@@ -29,10 +29,10 @@ module.exports = (sequelize, Sequelize) => {
       timestamps: false,
     });
   Invitation.associate = function (models) {
-    Invitation.belongsTo(models.User);
-    Invitation.belongsTo(models.WEvent);
-    Invitation.belongsTo(models.Contact);
-    Invitation.belongsTo(models.Design);
+    Invitation.belongsTo(models.User, {foreignKey: "UserId" });
+    Invitation.belongsTo(models.WEvent, {foreignKey: "EventId" });
+    Invitation.belongsTo(models.Contact, {foreignKey: "ContactId" });
+    Invitation.belongsTo(models.Design, {foreignKey: "DesignId" });
   };
   return Invitation;
 };

@@ -45,8 +45,8 @@ module.exports = (sequelize, Sequelize) => {
 	  freezeTableName: true
   });
   Design.associate = function (models) {
-    Design.belongsTo(models.User);
-    Design.belongsTo(models.WEvent);
+    Design.belongsTo(models.User, {foreignKey: "UserId" });
+    Design.belongsTo(models.WEvent, {foreignKey: "EventId" });
 };
     return Design;
   };
