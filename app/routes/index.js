@@ -4,6 +4,7 @@ const users = require("./user.routes");
 const contacts = require("./contact.routes");
 const events = require("./event.routes");
 const invitations = require("./invitation.routes")
+const webhooks = require("./webhooks.routes")
 const db = require("../models");
 const User = db.Users;
 
@@ -13,6 +14,7 @@ module.exports = app => {
     app.use('/contacts', contacts); // authenticateToken,
     app.use('/events', events);
     app.use('/users', invitations);
+    app.use('/webhooks', basicAuthentication,webhooks);
 }
 
 function authenticateToken(req, res, next) {
@@ -33,3 +35,29 @@ function authenticateToken(req, res, next) {
       })
     })
   }
+  function basicAuthentication(req, res, next) {
+    var authheader = req.headers;
+    authheader=authheader['authorization']
+    console.log(req.headers['authorization']);
+ 
+    if (!authheader) {
+        var err = new Error('You are not authenticated!');
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401;
+        return next(err)
+    }
+ 
+    var auth = new Buffer.from(authheader,'base64').toString().split(':');
+    var user = auth[0];
+    var pass = auth[1];
+ console.log('user',user=='whatsapp_hayyacom','pass ',pass,'lucky@2022')
+    if (user =='whatsapp_hayyacom' && pass =='lucky@2022') {
+        next();
+    } else {
+        var err = new Error('You are not authenticated!');
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401;
+        return next(err);
+    }
+ 
+}
