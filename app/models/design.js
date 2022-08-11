@@ -46,7 +46,7 @@ module.exports = (sequelize, Sequelize) => {
   });
   Design.associate = function (models) {
     Design.belongsTo(models.User, {foreignKey: "UserId" });
-    Design.belongsTo(models.WEvent, {foreignKey: "EventId" });
+    Design.belongsTo(models.WEvent, {foreignKey: "EventId",as:'event' });
 };
     return Design;
   };

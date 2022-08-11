@@ -1,10 +1,10 @@
 const db = require("../models");
-const Invitation = db.Invitations;
+const Invitation = db.Invitation;
 const Invitationseq = db.Invitationsseq;
-const Contacts = db.Contacts;
+const Contact = db.Contact;
 const Events = db.Events;
-const Users = db.Users;
-const Students = db.Students;
+const User = db.User;
+const Design = db.Design;
 const Op = db.Sequelize.Op;
 const User_Event = db.User_Event;
 const mysql = require('mysql2');
@@ -17,46 +17,36 @@ exports.create = async (req, res) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
-      message: "Content can not be empty!"
+      message: "Invitation can not be empty!"
     });
     return;
   }
-  let invitationData = req.body
-  const eventId = invitationData.eventId;
-  const invitations = await Invitation.findAll({ where: { eventId: eventId } })
-  let invitation_ids = [];
-  invitation_ids = invitations.map((inv) => {
-    return parseInt(inv.id.replace(eventId, ""))
-  })
-  //invitation_ids=[5,8]
-  const invitationid = invitation_ids.length != 0 ? Math.max(...invitation_ids) + 1 : 100;
-  //console.log('invitation_ids',invitation_ids, 'invitation_ids.length',invitation_ids.length)
-  // console.log('invitationid',invitationid)
-  Invitation.findOne({ where: { "contactId": req.body.contactId } }).then(invitation => {
+  let invitationData = req.body;
 
-    if (invitation) {
-      res.status(200).send({ data: invitation });
-    } else {
-      invitationData.id = eventId + invitationid;
-      console.log(eventId + invitationid)
-      console.log('invitationData', invitationData)
-      Invitation.create(invitationData)
-        .then(data => {
-          res.status(200).send({ data });
-        })
-        .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while creating the Invitation."
-          });
+  let user= await User.findOne({ where: { "id": req.body.UserId },include: [{ model: Design, as: 'designs' ,where:{EventId:invitationData.EventId}}] });
+  //let DesignId=user?.designs[0]?.id;
+  //console.log('DesignIdDesignIdDesignId',DesignId)
+  let contact= await Contact.findOne({ where: { "phoneNumber": req.body.phoneNumber } });
+ let invitation=null;
+   if(contact)
+   invitation= await Invitation.findOne({ where: { "ContactId":contact.id } })
+    if (invitation==null||contact==null) {
+      if(contact==null){
+        contact=await Contact.create({phoneNumber:invitationData.phoneNumber,name:invitationData.name})
+      }
+      invitationData.ContactId=contact.id;
+      invitation=await Invitation.create(invitationData).catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while creating the Invitation."
         });
-    }
-  }).catch(err => {
-    res.status(500).send({
-      message:
-        err || "Some error occurred while creating the Invitation."
-    });
-  })
+      });
+      if(invitationData.package=='Diamond'){
+        //cal whatsapp  api 
+      }
+    } 
+      res.status(200).send({data: invitation });   
+ 
 };
 
 // Retrieve all Invitations from the database.

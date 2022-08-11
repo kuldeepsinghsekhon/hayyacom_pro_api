@@ -1,6 +1,7 @@
 const db = require("../models");
-const Event = db.Events;
-const User = db.Users;
+const WEvent = db.WEvent;
+const User = db.User;
+const Design=db.Design
 const User_Event = db.User_Event;
 const Eventseq = db.Eventsseq;
 const PartyHall = db.PartyHall;
@@ -40,25 +41,32 @@ exports.create = async (req, res) => {
 
 
 // Retrieve all Events from the database.
-exports.findAll = async (req, res) => {
+exports.UserEvents = async (req, res) => {
   try {
-    let current_date=moment().format('MM/DD/YYYY');
-    let fromDate=moment().subtract(30, 'days').format('MM/DD/YYYY');
-    let upcomingDate=moment().add(30, 'days').format('MM/DD/YYYY');
-    console.log('current_date',current_date)
-let event= await Event.findAll({include: [{ model: db.Users,    as: 'users'	},{ model: PartyHall, as: 'partyhall', required: false  }]})
- let lastmonths =await Event.findAll({where : {"eventDate" : {[Op.between] : [fromDate , current_date ]}},include: [{    model: db.Users,    as: 'users'	},{ model: PartyHall, as: 'partyhall', required: false  }]})
-let upcoming= await Event.findAll({where : {"eventDate" : {[Op.between] :  [current_date , upcomingDate ]}},include: [{    model: db.Users,    as: 'users'	},{ model: PartyHall, as: 'partyhall', required: false  }]})
-res.send({data: event,lastmonths:lastmonths,upcoming:upcoming});
+    let UserId=req.params.id;
+    let data=[];//
+    let designs= await Design.findAll({where:{UserId:UserId},include:{ model: db.WEvent, as :'event'}})
+
+    designs.forEach(design => {
+  data.push({...design.event.dataValues,DesignId:design.id })
+});
+res.send({data: data});
 } catch (err) {
-  res.status(500).send({
+   res.status(500).send({
     message:
       err || "Some error occurred while creating the Event."
   });
 }
-
 };
-
+// let events= await WEvent.findAll({include:{
+//   model: db.User,
+//   as: 'users',where:{id:UserId},include:{
+//     model: db.Design ,as :'designs'}
+// }})
+// console.log(events[0].users[0].designs[0])
+// events.forEach(event => {
+//   data.push({EventId:event.id,DesignId:events[0].users[0].designs[0].id})
+// });
 // Find a single Event with an id
 exports.findOne = async (req, res) => {
   let event= await Event.findOne({where:{id:req.params.id},include:{

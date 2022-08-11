@@ -7,7 +7,7 @@ var router = require("express").Router();
 router.post("/", events.create);
 
 // Retrieve all events
-router.get("/all/:id", events.findAll);
+router.get("/user/:id", events.UserEvents);
 
 // Retrieve a single event with id
 router.get("/:id", events.findOne);

@@ -1,7 +1,6 @@
 
 module.exports = (sequelize, Sequelize) => {
     const WEvent = sequelize.define("WEvent", {
-        
         locationurl: {
             allowNull: false,
             type: Sequelize.STRING
@@ -10,7 +9,23 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true,
             type: Sequelize.STRING
         },
+        packagetype: {
+            allowNull: true,
+            type: Sequelize.STRING
+        },
+        paperAttendence: {
+            allowNull: true,
+            type: Sequelize.INTEGER
+        },
+        totalguest: {
+            allowNull: true,
+            type: Sequelize.INTEGER
+        },
         eventDate: {
+            allowNull: true,
+            type: Sequelize.STRING
+        },
+        eventtitle: {
             allowNull: true,
             type: Sequelize.STRING
         },
@@ -23,7 +38,7 @@ module.exports = (sequelize, Sequelize) => {
         freezeTableName: true
     });
     WEvent.associate = function (models) {
-        WEvent.belongsToMany(models.User, {as: 'users', through: "User_WEvent" });
+        WEvent.belongsToMany(models.User, { as: 'users', through: "User_WEvent" });
     };
     return WEvent;
 };

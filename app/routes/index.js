@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const auth = require("./auth.routes");
 const users = require("./user.routes");
 const contacts = require("./contact.routes");
-const events = require("./event.routes");
-const invitations = require("./invitation.routes")
+const event = require("./event.routes");
+const invitation = require("./invitation.routes")
 const webhooks = require("./webhooks.routes")
 const db = require("../models");
 const User = db.Users;
@@ -12,9 +12,9 @@ module.exports = app => {
     app.use('/auth', auth);
     app.use('/users', users);
     app.use('/contacts', contacts); // authenticateToken,
-    app.use('/events', events);
-    app.use('/users', invitations);
-    app.use('/webhooks', basicAuthentication,webhooks);
+    app.use('/events', event);
+    app.use('/invitations', invitation);
+    app.use('/webhooks',webhooks);//basicAuthentication
 }
 
 function authenticateToken(req, res, next) {
