@@ -45,10 +45,14 @@ exports.UserEvents = async (req, res) => {
   try {
     let UserId=req.params.id;
     let data=[];//
-    let designs= await Design.findAll({where:{UserId:UserId},include:{ model: db.WEvent, as :'event'}})
+    let designs= await Design.findAll({where:{UserId:UserId},include:[{ model: db.WEvent, as :'event'}
+   // ,{ model: db.User}
+    ,{ model: db.Message},
+   { model: db.Invitationpage}
+  ]})
 
     designs.forEach(design => {
-  data.push({...design.event.dataValues,DesignId:design.id })
+  data.push({...design.event.dataValues,DesignId:design.id,messages:design.Message})
 });
 res.send({data: data});
 } catch (err) {
@@ -69,10 +73,10 @@ res.send({data: data});
 // });
 // Find a single Event with an id
 exports.findOne = async (req, res) => {
-  let event= await Event.findOne({where:{id:req.params.id},include:{
+  let event= await WEvent.findOne({where:{id:req.params.id},include:[{
     model: db.User,
     as: 'user'
-  } }).catch(err=>{
+  }]}).catch(err=>{
     res.status(500).send({
       message:
         err || "Some error occurred while getting the Event."

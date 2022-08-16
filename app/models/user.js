@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
   });
   User.associate = function (models) {
     User.belongsToMany(models.WEvent, {as: 'events',through:"User_WEvent"});//
-    User.hasMany(models.Design, {as: 'designs'});//
+	 User.hasMany(models.Design, {as: 'designs'});//
 };
   return User;
 };

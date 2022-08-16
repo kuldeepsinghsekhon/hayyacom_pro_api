@@ -46,7 +46,9 @@ module.exports = (sequelize, Sequelize) => {
   });
   Design.associate = function (models) {
     Design.belongsTo(models.User, {foreignKey: "UserId" });
-    Design.belongsTo(models.WEvent, {foreignKey: "EventId",as:'event' });
+    Design.belongsTo(models.WEvent, {foreignKey: "EventId",as:"event"});
+    Design.hasOne(models.Message);
+    Design.hasOne(models.Invitationpage);
 };
     return Design;
   };
